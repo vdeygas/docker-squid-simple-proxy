@@ -28,6 +28,14 @@ else
   sed -i "/http_access deny manager/d" /etc/squid/squid.conf
 fi
 
+# Forward the squid logs to stdout to assist users of common container
+# related tooling (e.g., kubernetes, docker-compose, etc) to access
+# the service logs.
+tail -F /var/log/squid/access.log 2>/dev/null &
+tail -F /var/log/squid/error.log 2>/dev/null &
+tail -F /var/log/squid/store.log 2>/dev/null &
+tail -F /var/log/squid/cache.log 2>/dev/null &
+
 # Allow arguments to be passed to squid.
 if [[ ${1:0:1} = '-' ]]; then
   EXTRA_ARGS="$@"
